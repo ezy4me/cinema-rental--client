@@ -6,6 +6,7 @@ import { fetchImageUrl } from "@/utils/fetchImageUrl";
 import { getEquipmentById } from "@/services/equipment.api";
 import { useParams } from "next/navigation";
 import { Equipment } from "@/types/equipment";
+import Button from "@/components/ui/Button/Button";
 
 const EquipmentInfo: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -15,7 +16,6 @@ const EquipmentInfo: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-
         const fetchedEquipment = await getEquipmentById(params.id);
         setEquipment(fetchedEquipment);
 
@@ -35,11 +35,18 @@ const EquipmentInfo: React.FC = () => {
         <h1 className={styles.equipmentName}>{equipment?.name}</h1>
         <p className={styles.equipmentDescription}>{equipment?.description}</p>
         <p className={styles.equipmentPrice}>
-          Цена: ${parseFloat(equipment?.pricePerDay!).toFixed(2)} / день
+          Цена: <span>${parseFloat(equipment?.pricePerDay!).toFixed(2)}</span> /
+          день
         </p>
-        <p className={styles.equipmentQuantity}>
-          Количество: {equipment?.quantity}
-        </p>
+        <div className={styles.actions}>
+          <div className={styles.equipmentQuantity}>
+            <p>Кол-во: {equipment?.quantity}</p>
+          </div>
+          <Button size="large" variant="primary" type="submit">
+            В корзину
+          </Button>
+        </div>
+
         <div className={styles.equipmentImage}>
           <img
             src={image || "/images/placeholder.png"}

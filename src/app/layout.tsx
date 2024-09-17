@@ -3,6 +3,8 @@ import { Inter_Tight } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header/Header";
 import Footer from "@/components/layout/Footer/Footer";
+import BackgroundLines from "../components/layout/BackgroundLines/BackgroundLines";
+import Cart from "@/components/features/Cart/Cart";
 
 export const metadata: Metadata = {
   title: "Аренда кинооборудования",
@@ -21,6 +23,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={interTight.className}>
         <Header />
+        <BackgroundLines/>
+        <Cart/>
         <main>{children}</main>
         <Footer />
       </body>
