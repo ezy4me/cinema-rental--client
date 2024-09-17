@@ -1,0 +1,35 @@
+.section {
+  padding: 0;
+}
+
+.breadcrumbContainer {
+  display: flex;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+.breadcrumbSeparator {
+  margin: 0 8px;
+  color: #666;
+}
+
+.breadcrumbItem {
+  background-color: #f0f0f0;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.breadcrumbItemActive {
+  font-weight: bold;
+}
+
+.breadcrumbLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}

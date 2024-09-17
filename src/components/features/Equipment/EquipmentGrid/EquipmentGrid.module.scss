@@ -78,15 +78,18 @@
 }
 
 .equipmentCard {
-    border: 1px solid #cccccc5d;
+    border: 1px solid #cccccc33;
     border-radius: 12px;
     overflow: hidden;
     transition: box-shadow 0.3s;
     max-height: 300px;
+    cursor: pointer;
 }
 
 .equipmentCard:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid #f7c30f33;
+
 }
 
 .equipmentImage {

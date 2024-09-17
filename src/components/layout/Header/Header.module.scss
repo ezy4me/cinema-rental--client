@@ -11,7 +11,6 @@
     z-index: 1000;
     font-family: "Inter", sans-serif;
     grid-gap: 30px;
-    // border-bottom: 1px solid #cccccc5d;
 }
 
 .logo {
@@ -40,7 +39,8 @@
     grid-column: 2;
     display: flex;
     justify-content: flex-end;
-    gap: 30px;
+    align-items: center;
+    gap: 20px;
     list-style: none;
 
     li a {
@@ -76,27 +76,46 @@
     }
 }
 
-/* Tablet */
+.hamburger {
+    display: none;
+}
+
 @media (max-width: 768px) {
+    .socialIcons {
+        display: none;
+        grid-column: none;
+    }
+
     .header {
-        grid-template-columns: auto auto;
+        grid-template-columns: 1fr 1fr;
         justify-content: space-between;
     }
 
-    .nav ul {
-        display: none; /* Скрыть меню навигации на меньших экранах */
+    .nav {
+        display: none;
+        grid-column: none;
     }
 
     .logo {
         font-size: 1.5rem;
+        grid-column: 1;
+
+    }
+
+    .hamburger {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 1.5rem;
+        cursor: pointer;
+        grid-column: 2;
+
     }
 }
 
-/* Mobile */
 @media (max-width: 480px) {
     .header {
         padding: 10px 20px;
-        grid-template-columns: auto auto;
     }
 
     .socialIcons a {
