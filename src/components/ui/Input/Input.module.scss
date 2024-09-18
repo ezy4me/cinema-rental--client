@@ -7,7 +7,7 @@
 .label {
     font-size: 14px;
     margin-bottom: 8px;
-    color: #333;
+    color: #ffffff;
 }
 
 .inputWrapper {
@@ -16,16 +16,16 @@
 
 .input {
     width: 100%;
-    padding: 10px 40px 10px 20px;
+    padding: 12px 40px 12px 20px;
     font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 12px;
-    color: #333; 
-    background: #f9f9f9;
+    border: 1px solid #121212;
+    border-radius: 8px;
+    color: #f8f8f8; 
+    background: #202020;
     transition: border-color 0.3s;
 
     &:focus {
-        border-color: #e100ff; 
+        border-color: #f7c30f; 
         outline: none;
     }
 }
@@ -37,10 +37,10 @@
 .icon {
     position: absolute;
     top: 50%;
-    right: 10px;
+    right: 15px;
     transform: translateY(-50%);
-    color: #e100ff; 
-    font-size: 28px;
+    color: #f7c30f; 
+    font-size: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -49,5 +49,6 @@
 .error {
     color: #f44336;
     font-size: 12px;
-    margin-top: 4px;
+    margin-top: 8px;
+    margin-left: 8px;
 }

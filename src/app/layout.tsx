@@ -5,6 +5,7 @@ import Header from "@/components/layout/Header/Header";
 import Footer from "@/components/layout/Footer/Footer";
 import BackgroundLines from "../components/layout/BackgroundLines/BackgroundLines";
 import Cart from "@/components/features/Cart/Cart";
+import Providers from "@/components/Providers/Providers";
 
 export const metadata: Metadata = {
   title: "Аренда кинооборудования",
@@ -22,11 +23,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={interTight.className}>
-        <Header />
-        <BackgroundLines/>
-        <Cart/>
-        <main>{children}</main>
-        <Footer />
+        <Providers>
+          <Header />
+          <BackgroundLines />
+          <Cart />
+          <main>{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

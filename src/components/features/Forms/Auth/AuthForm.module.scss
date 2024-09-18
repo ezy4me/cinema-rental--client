@@ -1,0 +1,51 @@
+.authForm {
+    background-color: transparent;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 400px;
+    margin: 0 auto;
+    color: #ffffff;
+    font-family: "Inter", sans-serif;
+
+    h3 {
+        text-align: center;
+        color: #f7c30f;
+        margin-bottom: 1.5rem;
+        font-size: 24px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+    }
+
+    @media (max-width: 480px) {
+        padding: 1rem;
+        h3 {
+            font-size: 20px;
+        }
+        form {
+            gap: 1rem;
+        }
+        p {
+            font-size: 13px;
+        }
+    }
+}
+
+.action {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #cccccc;
+    font-size: 14px;
+
+    span {
+        color: #f7c30f;
+        cursor: pointer;
+        font-weight: bold;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
