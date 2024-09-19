@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import styles from "./AuthForm.module.scss";
-import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
+import { FaEnvelope, FaLock } from "react-icons/fa";
 import Input from "@/components/ui/Input/Input";
 import Button from "@/components/ui/Button/Button";
-import { login, register } from "@/services/auth.api";
+import { register } from "@/services/auth.api";
+import { signIn, useSession } from "next-auth/react";
 
 interface AuthFormProps {
   onClose: () => void;
@@ -20,6 +21,7 @@ interface FormData {
 const AuthForm: React.FC<AuthFormProps> = ({ onClose }) => {
   const [isRegister, setIsRegister] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   const {
     register: registerInput,
@@ -32,26 +34,24 @@ const AuthForm: React.FC<AuthFormProps> = ({ onClose }) => {
   const toggleAuthMode = () => setIsRegister(!isRegister);
 
   const onSubmit = async (data: FormData) => {
-    setServerError(null); // Очищаем предыдущие ошибки
+    setServerError(null);
 
     try {
       if (isRegister) {
-        // Вызов функции регистрации
         const response = await register({
           email: data.email,
           password: data.password,
         });
         console.log("Регистрация успешна", response);
-        // После регистрации можно закрыть окно
         onClose();
       } else {
-        // Вызов функции входа
-        const response = await login({
+        const response = await signIn("credentials", {
           email: data.email,
           password: data.password,
+          redirect: false,
         });
+
         console.log("Вход успешен", response);
-        // После успешного входа можно закрыть окно
         onClose();
       }
     } catch (error) {
@@ -60,10 +60,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ onClose }) => {
     }
   };
 
+  useEffect(() => {
+    if (session) localStorage.setItem("accessToken", session?.accessToken);
+  }, [session]);
+
   return (
     <div className={styles.authForm}>
       <h3>{isRegister ? "Регистрация" : "Вход"}</h3>
-
       <form onSubmit={handleSubmit(onSubmit)}>
         <Input
           icon={<FaEnvelope />}

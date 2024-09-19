@@ -1,23 +1,23 @@
-import NextAuth from "next-auth";
+import "next-auth";
 
 declare module "next-auth" {
   interface Session {
     user: {
-      id: number;
-      email: string;
-      role: string;
+        id: number;
+        email: string;
+        role: string;
     };
-    accesToken: string;
+    accessToken: string;
     refreshToken: {
-      token: number;
+      token: string;
       exp: string;
       userAgent: string;
-      userId: string;
+      userId: number;
     };
   }
 }
 
-import { JWT } from "next-auth/jwt";
+import "next-auth/jwt";
 
 declare module "next-auth/jwt" {
   interface JWT {
@@ -26,12 +26,12 @@ declare module "next-auth/jwt" {
       email: string;
       role: string;
     };
-    accesToken: string;
+    accessToken: string;
     refreshToken: {
-      token: number;
+      token: string;
       exp: string;
       userAgent: string;
-      userId: string;
+      userId: number;
     };
   }
 }

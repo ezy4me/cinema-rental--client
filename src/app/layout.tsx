@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { Metadata } from "next";
 import { Inter_Tight } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header/Header";
@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer/Footer";
 import BackgroundLines from "../components/layout/BackgroundLines/BackgroundLines";
 import Cart from "@/components/features/Cart/Cart";
 import Providers from "@/components/Providers/Providers";
+import { Session } from "next-auth";
 
 export const metadata: Metadata = {
   title: "Аренда кинооборудования",
@@ -17,13 +18,15 @@ const interTight = Inter_Tight({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
-}: Readonly<{
+  session,
+}: {
   children: React.ReactNode;
-}>) {
+  session: Session;
+}) {
   return (
     <html lang="en">
       <body className={interTight.className}>
-        <Providers>
+        <Providers session={session}>
           <Header />
           <BackgroundLines />
           <Cart />

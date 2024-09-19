@@ -3,21 +3,36 @@ import { JWT } from "next-auth/jwt";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-async function refreshToken(token: JWT): Promise<JWT> {
-  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/auth/refresh", {
-    method: "POST",
-    headers: {
-      authorization: `Refresh ${token.refreshToken}`,
-    },
-  });
-  console.log("refreshed");
+export async function refreshToken(token: JWT): Promise<JWT> {
+  try {
+    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/auth/refresh", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token.refreshToken.token}`,
+      },
+      credentials: "include",
+    });
 
-  const response = await res.json();
+    const refreshedTokens = await res.json();
 
-  return {
-    ...token,
-    backendTokens: response,
-  };
+    if (!res.ok) {
+      throw new Error("Ошибка при обновлении токенов");
+    }
+
+    return {
+      ...token,
+      accessToken: refreshedTokens.accessToken,
+      refreshToken: refreshedTokens.refreshToken || token.refreshToken,
+    };
+  } catch (error) {
+    console.error("Ошибка при обновлении токена:", error);
+
+    return {
+      ...token,
+      error: "RefreshTokenError",
+    };
+  }
 }
 
 export const authOptions: NextAuthOptions = {
@@ -28,47 +43,63 @@ export const authOptions: NextAuthOptions = {
         email: {
           label: "email",
           type: "text",
-          placeholder: "jsmith",
         },
-        password: { label: "Password", type: "password" },
+        password: { label: "password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
         const { email, password } = credentials;
-        const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/auth/login", {
-          method: "POST",
-          body: JSON.stringify({
-            email,
-            password,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+
+        const res = await fetch(
+          process.env.NEXT_PUBLIC_API_URL + "/auth/login",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email,
+              password,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
         if (res.status == 401) {
           console.log(res.statusText);
-
           return null;
         }
+
         const user = await res.json();
+
+        console.log(user);
+
         return user;
       },
     }),
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) return { ...token, ...user };
+    async jwt({ token, user }): Promise<any> {
+      if (user) {
+        return {
+          ...token,
+          accessToken: token.accessToken,
+          refreshToken: token.refreshToken,
+          ...user
+        };
+      }
 
-      if (new Date() < new Date(token.refreshToken.exp))
-        return token;
+      if (token.refreshToken && new Date() > new Date(token.refreshToken.exp)) {
+        return await refreshToken(token);
+      }
 
-      return await refreshToken(token);
+      return token;
     },
 
-    async session({ token, session }) {
-      session.user = token.user;
-      session.refreshToken.token = token.refreshToken.token;
+    async session({ session, token }) {
+      session.user = { ...token.user };
+      session.accessToken = token.accessToken;
+      session.refreshToken = token.refreshToken;
 
       return session;
     },

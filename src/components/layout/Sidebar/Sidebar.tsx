@@ -20,11 +20,6 @@ const Sidebar = ({
       <nav className={styles.nav}>
         <ul>
           <li>
-            <Link href="/" onClick={onClose}>
-              Главная
-            </Link>
-          </li>
-          <li>
             <Link href="/equipment" onClick={onClose}>
               Оборудование
             </Link>

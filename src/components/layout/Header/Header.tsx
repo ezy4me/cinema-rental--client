@@ -42,9 +42,6 @@ const Header = () => {
         <nav className={styles.nav}>
           <ul>
             <li>
-              <Link href="/">Главная</Link>
-            </li>
-            <li>
               <Link href="/equipment">Оборудование</Link>
             </li>
             <li>

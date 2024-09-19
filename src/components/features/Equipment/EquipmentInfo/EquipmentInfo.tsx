@@ -7,24 +7,23 @@ import { getEquipmentById } from "@/services/equipment.api";
 import { useParams } from "next/navigation";
 import { Equipment } from "@/types/equipment";
 import Button from "@/components/ui/Button/Button";
-import { getCategoryById } from "@/services/category.api";
 import { getBrandById } from "@/services/brand.api";
+import { addCartEquipment } from "@/services/cart.api";
+import { useSession } from "next-auth/react";
 
 const EquipmentInfo: React.FC = () => {
   const params = useParams<{ id: string }>();
   const [equipment, setEquipment] = useState<Equipment | null>(null);
-  const [caregoryName, setCategoryName] = useState<string>("");
   const [brandName, setBrandName] = useState<string>("");
   const [image, setImage] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const fetchedEquipment = await getEquipmentById(params.id);
-        const caregory = await getCategoryById(fetchedEquipment.categoryId);
         const brand = await getBrandById(fetchedEquipment.brandId);
         setEquipment(fetchedEquipment);
-        setCategoryName(caregory.name);
         setBrandName(brand.name);
 
         const imageUrl = await fetchImageUrl(fetchedEquipment.fileId);
@@ -36,6 +35,19 @@ const EquipmentInfo: React.FC = () => {
 
     fetchData();
   }, [params.id]);
+
+  const handleAddToCart = async () => {
+    if (equipment && session?.user?.id && session.accessToken) {
+      try {
+        await addCartEquipment(session.user.id, equipment.id, session.accessToken);
+        alert('Товар добавлен в корзину!');
+      } catch (error) {
+        console.error("Error adding item to cart:", error);
+      }
+    } else {
+      console.error("User ID or access token is missing");
+    }
+  };
 
   return (
     <section>
@@ -56,7 +68,7 @@ const EquipmentInfo: React.FC = () => {
           <div className={styles.equipmentQuantity}>
             <p>Кол-во: {equipment?.quantity}</p>
           </div>
-          <Button size="large" variant="primary" type="submit">
+          <Button size="large" variant="primary" onClick={handleAddToCart}>
             В корзину
           </Button>
         </div>

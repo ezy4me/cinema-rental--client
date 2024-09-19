@@ -89,6 +89,28 @@
     }
 }
 
+.cartItem {
+    padding: 1rem;
+    border-bottom: 1px solid #cccccc20;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.equipmentImage {
+    width: 80px;
+    height: auto;
+}
+
+.image {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 12px;
+    z-index: -1;
+}
+
 .overlay {
     position: fixed;
     top: 0;
