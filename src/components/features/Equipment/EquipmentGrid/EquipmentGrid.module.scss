@@ -74,6 +74,7 @@
     flex: 1;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-rows: 1fr 1fr 1fr;
     gap: 20px;
 }
 
@@ -84,7 +85,7 @@
     transition: box-shadow 0.3s;
     max-height: 300px;
     cursor: pointer;
-    background: #000;
+    background: #121212;
     transition: all .3s ease;
 }
 

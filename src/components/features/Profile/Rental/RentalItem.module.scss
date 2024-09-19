@@ -1,0 +1,63 @@
+.rentalItem {
+    // border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    background-color: #121212;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.rentalSection {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 2rem;
+    padding: 1rem;
+    border-bottom: 1px solid #cccccc50;
+}
+
+.rentalItem p {
+    margin: 0;
+    font-size: 1rem;
+    color: #ffffff;
+}
+
+.rentalItem span {
+    color: #ffffff;
+}
+
+.rentalItem h4 {
+    margin-top: 0;
+    font-size: 1.2rem;
+    color: #ffffff;
+}
+
+.rentalItem ul {
+    list-style: none;
+    padding: 0;
+}
+
+.rentalItem li {
+    font-size: 1rem;
+    color: #ffffff;
+}
+
+.rentalSummary {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 2rem;
+    padding: 1rem;
+
+    p {
+        margin: 0;
+        font-size: 1rem;
+        color: #f7c30f;
+
+        span {
+            color: #ffffff;
+        }
+    }
+}

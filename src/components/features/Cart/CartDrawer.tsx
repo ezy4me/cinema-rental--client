@@ -1,19 +1,11 @@
-import React from 'react';
-import { FaTimes } from 'react-icons/fa';
-import CartItem from './CartItem';
-import styles from './Cart.module.scss';
+"use client";
 
-interface Equipment {
-  id: number;
-  name: string;
-  description: string;
-  pricePerDay: string;
-  quantity: number;
-  statusId: number;
-  brandId: number;
-  categoryId: number;
-  fileId: number;
-}
+import React from "react";
+import { FaTimes } from "react-icons/fa";
+import CartItem from "./CartItem";
+import styles from "./Cart.module.scss";
+import { Equipment } from "@/types/equipment";
+import Loader from "@/components/ui/Loader/Loader";
 
 interface CartItem {
   id: number;
@@ -31,9 +23,19 @@ interface CartDrawerProps {
   error: string | null;
   session: any;
   status: string;
+  onUpdate: () => void;
 }
 
-const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, toggleCart, cartItems, loading, error, session, status }) => {
+const CartDrawer: React.FC<CartDrawerProps> = ({
+  isOpen,
+  toggleCart,
+  cartItems,
+  loading,
+  error,
+  session,
+  status,
+  onUpdate,
+}) => {
   return (
     <div className={`${styles.cartDrawer} ${isOpen ? styles.open : ""}`}>
       <div className={styles.cartHeader}>
@@ -43,18 +45,18 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, toggleCart, cartItems, 
         </button>
       </div>
       <div className={styles.cartContent}>
-        {status === 'loading' ? (
+        {status === "loading" ? (
           <p>Загрузка...</p>
         ) : !session ? (
           <p>Пожалуйста, авторизуйтесь для просмотра содержимого корзины</p>
         ) : loading ? (
-          <p>Загрузка товаров из корзины...</p>
+          <Loader/>
         ) : error ? (
           <p>{error}</p>
         ) : cartItems.length > 0 ? (
           <ul>
-            {cartItems.map(item => (
-              <CartItem key={item.id} {...item} />
+            {cartItems.map((item) => (
+              <CartItem key={item.id} {...item} onUpdate={onUpdate} />
             ))}
           </ul>
         ) : (

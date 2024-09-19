@@ -1,0 +1,26 @@
+.rentalsSection {
+    margin-top: 2rem;
+}
+
+.rentalsList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.rentalItem {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #fff;
+}
+
+.rentalItem div {
+    margin-bottom: 0.5rem;
+}
+
+.title {
+    font-size: 32px;
+    margin-bottom: 2rem;
+}

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import styles from "./ContactSection.module.scss";
+import Input from "@/components/ui/Input/Input";
 
 interface FormData {
   name: string;
@@ -59,7 +60,7 @@ const ContactSection: React.FC = () => {
           )}
           <div className={styles.formGroup}>
             <label htmlFor="name">Имя</label>
-            <input
+            <Input
               type="text"
               id="name"
               name="name"
@@ -70,7 +71,7 @@ const ContactSection: React.FC = () => {
           </div>
           <div className={styles.formGroup}>
             <label htmlFor="email">Email</label>
-            <input
+            <Input
               type="email"
               id="email"
               name="email"

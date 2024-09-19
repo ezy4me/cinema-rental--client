@@ -4,7 +4,7 @@ import { getBrands } from "@/services/brand.api";
 import { getCategories } from "@/services/category.api";
 import { getEquipments } from "@/services/equipment.api";
 
-export default async function Home() {
+export default async function Page() {
   const equipmentData = await getEquipments();
   const brandData = await getBrands();
   const categoryData = await getCategories();
@@ -13,7 +13,7 @@ export default async function Home() {
     <div className="page">
       <EquipmentHeroSection />
       <EquipmentGrid
-        equipments={equipmentData}
+        equipments={equipmentData} 
         brands={brandData}
         categories={categoryData}
       />

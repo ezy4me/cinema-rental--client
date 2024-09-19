@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./CategorySection.module.scss";
 import { fetchImageUrl } from "@/utils/fetchImageUrl";
 import { Category } from "@/types/category";
@@ -11,6 +12,7 @@ interface CategorySectionProps {
 
 const CategorySection: React.FC<CategorySectionProps> = ({ categories }) => {
   const [categoryData, setCategoryData] = useState<Category[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCategoriesWithImages = async () => {
@@ -30,12 +32,20 @@ const CategorySection: React.FC<CategorySectionProps> = ({ categories }) => {
     fetchCategoriesWithImages();
   }, [categories]);
 
+  const handleCategoryClick = (categoryId: number) => {
+    router.push(`/equipment?categoryId=${categoryId}`);
+  };
+
   return (
     <section className={styles.categorySection}>
       <h2 className="title">Оборудование</h2>
       <div className={styles.container}>
         {categoryData.map((category) => (
-          <div className={styles.card} key={category.id}>
+          <div
+            className={styles.card}
+            key={category.id}
+            onClick={() => handleCategoryClick(category.id)} 
+          >
             <div className={styles.imageWrapper}>
               <img
                 src={category.image || "/images/placeholder.png"}

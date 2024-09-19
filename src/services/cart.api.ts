@@ -51,3 +51,69 @@ export const addCartEquipment = async (
     throw error;
   }
 };
+
+export const updateCartEquipment = async (
+  userId: number,
+  equipmentId: number,
+  quantity: number,
+  accessToken: string
+): Promise<any> => {
+  try {
+    const response = await apiInstance.get(`/cart/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const userCart = response.data;
+
+    if (userCart && userCart.id) {
+      const equipmentResponse = await apiInstance.put(
+        `/cart/equipment/${userCart.id}/${equipmentId}`,
+        { quantity },
+        {
+          headers: {
+            Authorization: `${accessToken}`,
+          },
+        }
+      );
+      return equipmentResponse.data;
+    }
+
+    return [];
+  } catch (error) {
+    console.error("Ошибка при обновлении товара в корзине", error);
+    throw error;
+  }
+};
+
+export const deleteCartEquipment = async (
+  userId: number,
+  equipmentId: number,
+  accessToken: string
+): Promise<any> => {
+  try {
+    const response = await apiInstance.get(`/cart/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const userCart = response.data;
+
+    if (userCart && userCart.id) {
+      const equipmentResponse = await apiInstance.delete(
+        `/cart/equipment/${userCart.id}/${equipmentId}`,
+        {
+          headers: {
+            Authorization: `${accessToken}`,
+          },
+        }
+      );
+      return equipmentResponse.data;
+    }
+
+    return [];
+  } catch (error) {
+    console.error("Ошибка при обновлении товара в корзине", error);
+    throw error;
+  }
+};

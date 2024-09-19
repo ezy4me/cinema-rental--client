@@ -5,20 +5,8 @@ import { useSession } from 'next-auth/react';
 import CartButton from './CartButton';
 import CartDrawer from './CartDrawer';
 import { getCartEquipments } from '@/services/cart.api';
-
-import styles from './Cart.module.scss'
-
-interface Equipment {
-  id: number;
-  name: string;
-  description: string;
-  pricePerDay: string;
-  quantity: number;
-  statusId: number;
-  brandId: number;
-  categoryId: number;
-  fileId: number;
-}
+import styles from './Cart.module.scss';
+import { Equipment } from '@/types/equipment';
 
 interface CartItem {
   id: number;
@@ -43,6 +31,7 @@ const Cart = () => {
     if (session?.user.id) {
       setLoading(true);
       try {
+        await new Promise(resolve => setTimeout(resolve, 1000));
         const items = await getCartEquipments(session.user.id);
         setCartItems(items);
       } catch (err) {
@@ -52,6 +41,10 @@ const Cart = () => {
         setLoading(false);
       }
     }
+  };
+
+  const handleUpdate = () => {
+    loadCartItems();
   };
 
   useEffect(() => {
@@ -71,6 +64,7 @@ const Cart = () => {
         error={error}
         session={session}
         status={status}
+        onUpdate={handleUpdate}
       />
       {isOpen && <div className={styles.overlay} onClick={toggleCart}></div>}
     </>

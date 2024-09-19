@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import styles from "./EquipmentGrid.module.scss";
 import { Equipment } from "@/types/equipment";
 import { fetchImageUrl } from "@/utils/fetchImageUrl";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import Loader from "@/components/ui/Loader/Loader";
 
 interface EquipmentGridProps {
   equipments: Equipment[];
@@ -24,11 +25,15 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({
   const [selectedBrand, setSelectedBrand] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+
+  const searchParams = useSearchParams();
+  const selectedCategoryId = searchParams.get("categoryId");
 
   const router = useRouter();
 
   useEffect(() => {
-    const fetchCategoriesWithImages = async () => {
+    const fetchEquipmentsWithImages = async () => {
       const updatedEquipments = await Promise.all(
         equipments.map(async (equipment) => {
           const imageUrl = await fetchImageUrl(equipment.fileId);
@@ -38,26 +43,41 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({
           };
         })
       );
-
       setEquipmentData(updatedEquipments);
       setFilteredEquipments(updatedEquipments);
     };
 
-    fetchCategoriesWithImages();
+    fetchEquipmentsWithImages();
   }, [equipments]);
 
   useEffect(() => {
-    const filtered = equipmentData.filter((item) => {
-      const matchesBrand = selectedBrand
-        ? item.brandId === selectedBrand
-        : true;
-      const matchesCategory = selectedCategory
-        ? item.categoryId === selectedCategory
-        : true;
-      return matchesBrand && matchesCategory;
-    });
+    if (selectedCategoryId) {
+      setSelectedCategory(Number(selectedCategoryId));
+    }
+  }, [selectedCategoryId]);
 
-    setFilteredEquipments(filtered);
+  useEffect(() => {
+    const filterEquipments = async () => {
+      setLoading(true); 
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      const filtered = equipmentData.filter((item) => {
+        const matchesBrand = selectedBrand
+          ? item.brandId === selectedBrand
+          : true;
+        const matchesCategory = selectedCategory
+          ? item.categoryId === selectedCategory
+          : true;
+
+        return matchesBrand && matchesCategory;
+      });
+
+      setFilteredEquipments(filtered); 
+      setLoading(false); 
+    };
+
+    filterEquipments()
   }, [selectedBrand, selectedCategory, equipmentData]);
 
   const startIndex = (currentPage - 1) * PAGE_SIZE;
@@ -74,6 +94,14 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({
     { length: totalPages },
     (_, index) => index + 1
   );
+
+  const handleCategorySelect = (categoryId: number | null) => {
+    setSelectedCategory(categoryId);
+    setCurrentPage(1);
+
+    const query = categoryId ? `?categoryId=${categoryId}` : "";
+    router.replace(`/equipment${query}`, { scroll: false });
+  };
 
   return (
     <section>
@@ -110,7 +138,7 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({
                   className={
                     selectedCategory === null ? styles.selectedFilter : ""
                   }
-                  onClick={() => setSelectedCategory(null)}>
+                  onClick={() => handleCategorySelect(null)}>
                   Все
                 </li>
                 {categories.map((category) => (
@@ -121,7 +149,7 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({
                         ? styles.selectedFilter
                         : ""
                     }
-                    onClick={() => setSelectedCategory(category.id)}>
+                    onClick={() => handleCategorySelect(category.id)}>
                     {category.name}
                   </li>
                 ))}
@@ -129,47 +157,53 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({
             </div>
           </aside>
           <main className={styles.equipmentGrid}>
-            {paginatedEquipments.map((item) => (
-              <div
-                key={item.id}
-                className={styles.equipmentCard}
-                onClick={() => router.push(`/equipment/${item.id}`)}>
-                <div className={styles.equipmentImage}>
-                  <img
-                    src={item.image || "/images/placeholder.png"}
-                    alt={item.name}
-                    className={styles.equipmentImage}
-                  />
+            {loading ? (
+              <Loader />
+            ) : (
+              paginatedEquipments.map((item) => (
+                <div
+                  key={item.id}
+                  className={styles.equipmentCard}
+                  onClick={() => router.push(`/equipment/${item.id}`)}>
+                  <div className={styles.equipmentImage}>
+                    <img
+                      src={item.image || "/images/placeholder.png"}
+                      alt={item.name}
+                      className={styles.equipmentImage}
+                    />
+                  </div>
+                  <div className={styles.equipmentInfo}>
+                    <h3 className={styles.equipmentName}>{item.name}</h3>
+                    <p className={styles.equipmentDescription}>
+                      {item.description}
+                    </p>
+                    <p className={styles.equipmentPrice}>
+                      ${parseFloat(item.pricePerDay).toFixed(2)} / день
+                    </p>
+                    <p className={styles.equipmentQuantity}>
+                      Количество: {item.quantity}
+                    </p>
+                  </div>
                 </div>
-                <div className={styles.equipmentInfo}>
-                  <h3 className={styles.equipmentName}>{item.name}</h3>
-                  <p className={styles.equipmentDescription}>
-                    {item.description}
-                  </p>
-                  <p className={styles.equipmentPrice}>
-                    ${parseFloat(item.pricePerDay).toFixed(2)} / день
-                  </p>
-                  <p className={styles.equipmentQuantity}>
-                    Количество: {item.quantity}
-                  </p>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </main>
         </div>
 
-        <div className={styles.pagination}>
-          {pageNumbers.map((page) => (
-            <button
-              key={page}
-              className={`${styles.pageButton} ${
-                page === currentPage ? styles.activePage : ""
-              }`}
-              onClick={() => handlePageChange(page)}>
-              {page}
-            </button>
-          ))}
-        </div>
+        {!loading && (
+          <div className={styles.pagination}>
+            {pageNumbers.map((page) => (
+              <button
+                key={page}
+                className={`${styles.pageButton} ${
+                  page === currentPage ? styles.activePage : ""
+                }`}
+                onClick={() => handlePageChange(page)}>
+                {page}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

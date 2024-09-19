@@ -96,10 +96,11 @@
     display: flex;
     flex-direction: column;
     gap: .5rem;
+    position: relative;
 }
 
 .equipmentImage {
-    width: 80px;
+    width: 120px;
     height: auto;
 }
 
@@ -109,6 +110,44 @@
     object-fit: contain;
     border-radius: 12px;
     z-index: -1;
+}
+
+.quantityControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.controlButton {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+        color: #f7c30f;
+    }
+}
+
+.removeButton {
+    background: none;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    border: none;
+    color: #f7c30f;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+        color: #ff0000;
+    }
 }
 
 .overlay {
