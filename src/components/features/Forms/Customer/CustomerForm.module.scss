@@ -1,0 +1,15 @@
+.customerInfoForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+}
+
+.submitButton {
+    align-self: flex-start;
+    margin-top: 1rem;
+}

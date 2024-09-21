@@ -4,18 +4,7 @@ import { fetchImageUrl } from "@/utils/fetchImageUrl";
 import { updateCartEquipment, deleteCartEquipment } from "@/services/cart.api";
 import { useSession } from "next-auth/react";
 import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
-
-interface Equipment {
-  id: number;
-  name: string;
-  description: string;
-  pricePerDay: string;
-  quantity: number;
-  statusId: number;
-  brandId: number;
-  categoryId: number;
-  fileId: number;
-}
+import { Equipment } from "@/types/equipment";
 
 interface CartItemProps {
   id: number;

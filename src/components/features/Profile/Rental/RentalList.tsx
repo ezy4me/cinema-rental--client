@@ -24,7 +24,7 @@ const RentalList: React.FC = () => {
           setLoading(false);
         }
       } else {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -32,7 +32,7 @@ const RentalList: React.FC = () => {
   }, [session]);
 
   if (loading) {
-    return <Loader />; 
+    return <Loader />;
   }
 
   return (
@@ -40,7 +40,7 @@ const RentalList: React.FC = () => {
       <div className="container">
         <h2 className={styles.title}>Мои заказы</h2>
         {rentals.length === 0 ? (
-          <p>У вас нет заказов.</p>
+          <p className={styles.noRentalsText}>У вас нет заказов.</p>
         ) : (
           <ul className={styles.rentalsList}>
             {rentals.map((rental) => (

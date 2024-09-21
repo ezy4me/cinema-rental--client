@@ -1,44 +1,74 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import styles from "./RentalItem.module.scss";
+import { fetchImageUrl } from "@/utils/fetchImageUrl";
 
-interface RentalItemProps {
-  rental: {
-    id: string;
-    date: string;
-    status: string;
-    items: { id: string; name: string; quantity: number }[];
-    totalPrice: number;
-  };
-}
+const RentalItem: React.FC<{ rental: any }> = ({ rental }) => {
+  // State to store images for each equipment in the rental
+  const [equipmentImages, setEquipmentImages] = useState<{ [key: number]: string | null }>({});
 
-const RentalItem: React.FC<RentalItemProps> = ({ rental }) => {
+  useEffect(() => {
+    const fetchImages = async () => {
+      // Loop over each equipment to fetch its image
+      const images: { [key: number]: string | null } = {};
+      for (const item of rental.rentalEquipment) {
+        try {
+          const imageUrl = await fetchImageUrl(item.equipment.fileId);
+          images[item.equipment.id] = imageUrl;
+        } catch (error) {
+          console.error(`Error fetching image for equipment ${item.equipment.id}:`, error);
+          images[item.equipment.id] = null;
+        }
+      }
+      setEquipmentImages(images);
+    };
+
+    fetchImages();
+  }, [rental]);
+
   return (
     <li className={styles.rentalItem}>
       <div className={styles.rentalSection}>
-        <p>
-          <span>Номер заказа:</span> {rental.id}
-        </p>
+        <h4>Заказ #{rental.id}</h4>
 
-        <p>
-          <strong>Статус:</strong> {rental.status}
-        </p>
+        <div className={styles.rentalDate}>
+          <p>
+            <span>Дата начала:</span>{" "}
+            {new Date(rental.startDate).toLocaleDateString()}
+          </p>
+          <p>
+            <span>Дата окончания:</span>{" "}
+            {new Date(rental.endDate).toLocaleDateString()}
+          </p>
+        </div>
       </div>
-      <div className={styles.rentalSection}>
-        <h4>Товары:</h4>
+
+      <div className={styles.rentalSummary}>
         <ul>
-          {rental?.items?.map((item) => (
-            <li key={item.id}>
-              {item.name} - {item.quantity} шт.
+          {rental.rentalEquipment.map((item: any) => (
+            <li key={item.id} className={styles.equipmentItem}>
+              <div className={styles.equipmentImage}>
+                {equipmentImages[item.equipment.id] ? (
+                  <img
+                    src={equipmentImages[item.equipment.id]!}
+                    alt={item.equipment.name}
+                    className={styles.image}
+                  />
+                ) : (
+                  <div className={styles.imagePlaceholder}>Image not available</div>
+                )}
+              </div>
+              <div className={styles.equipmentDetails}>
+                <span>{item.equipment.name}</span> — {item.quantity} шт. по{" "}
+                {item.equipment.pricePerDay} руб./день
+              </div>
             </li>
           ))}
         </ul>
-      </div>
-      <div className={styles.rentalSummary}>
+
         <p>
-          <span>Сумма заказа:</span> ${rental?.totalPrice?.toFixed(2)}
-        </p>
-        <p>
-          <span>Дата:</span> {new Date(rental.date).toLocaleDateString()}
+          Итоговая сумма: <span>{rental.totalAmount} руб.</span>
         </p>
       </div>
     </li>

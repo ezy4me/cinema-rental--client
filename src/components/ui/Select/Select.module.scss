@@ -4,56 +4,83 @@
     align-items: flex-start;
     margin-bottom: 16px;
     width: 100%;
-}
-
-.label {
+  }
+  
+  .label {
     font-size: 18px;
     margin-bottom: 8px;
     margin-left: 16px;
     color: #ffffff;
-}
-
-.inputWrapper {
+  }
+  
+  .inputWrapper {
     position: relative;
     width: 100%;
-
-}
-
-.input {
+  }
+  
+  .input {
     width: 100%;
     padding: 12px 40px 12px 20px;
     font-size: 1rem;
     border: 1px solid #121212;
     border-radius: 8px;
-    color: #f8f8f8; 
+    color: #f8f8f8;
     background: #202020;
     transition: border-color 0.3s;
-
+    cursor: pointer;
+    text-align: start;
+  
     &:focus {
-        border-color: #f7c30f; 
-        outline: none;
+      border-color: #f7c30f;
+      outline: none;
     }
-}
-
-.inputError {
+  }
+  
+  .inputError {
     border-color: #f44336;
-}
-
-.icon {
+  }
+  
+  .icon {
     position: absolute;
     top: 50%;
     right: 15px;
     transform: translateY(-50%);
-    color: #f7c30f; 
+    color: #f7c30f;
     font-size: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-}
+  }
+  
+  .optionsContainer {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #202020;
+    border: 1px solid #121212;
+    border-radius: 8px;
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .option {
+    padding: 12px 20px;
+    color: #f8f8f8;
+    cursor: pointer;
+    text-align: start;
 
-.error {
+  
+    &:hover {
+      background-color: #2a2a2a;
+    }
+  }
+  
+  .error {
     color: #f44336;
     font-size: 12px;
     margin-top: 8px;
     margin-left: 8px;
-}
+  }
+  

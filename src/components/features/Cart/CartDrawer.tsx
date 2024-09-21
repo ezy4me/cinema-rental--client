@@ -6,6 +6,8 @@ import CartItem from "./CartItem";
 import styles from "./Cart.module.scss";
 import { Equipment } from "@/types/equipment";
 import Loader from "@/components/ui/Loader/Loader";
+import CheckoutButton from "./CheckoutButton";
+import { useRouter } from "next/navigation";
 
 interface CartItem {
   id: number;
@@ -36,6 +38,12 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
   status,
   onUpdate,
 }) => {
+  const router = useRouter();
+  const handleCheckout = () => {
+    router.push("/order");
+    toggleCart();
+  };
+
   return (
     <div className={`${styles.cartDrawer} ${isOpen ? styles.open : ""}`}>
       <div className={styles.cartHeader}>
@@ -50,15 +58,23 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
         ) : !session ? (
           <p>Пожалуйста, авторизуйтесь для просмотра содержимого корзины</p>
         ) : loading ? (
-          <Loader/>
+          <Loader />
         ) : error ? (
           <p>{error}</p>
         ) : cartItems.length > 0 ? (
-          <ul>
-            {cartItems.map((item) => (
-              <CartItem key={item.id} {...item} onUpdate={onUpdate} />
-            ))}
-          </ul>
+          <>
+            <ul>
+              {cartItems.map((item) => (
+                <CartItem key={item.id} {...item} onUpdate={onUpdate} />
+              ))}
+            </ul>
+            <div className={styles.checkoutSection}>
+              <CheckoutButton
+                disabled={cartItems.length === 0 || loading}
+                onCheckout={handleCheckout}
+              />
+            </div>
+          </>
         ) : (
           <p>Ваша корзина пуста</p>
         )}

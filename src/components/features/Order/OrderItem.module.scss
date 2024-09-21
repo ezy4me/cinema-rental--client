@@ -1,0 +1,41 @@
+.orderItem {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.itemName {
+    font-weight: bold;
+}
+
+.itemPrice {
+    color: #f7c30f;
+}
+
+.itemQuantity {
+    color: #ffffff;
+}
+
+.equipmentImage {
+    width: 160px;
+    height: auto;
+}
+
+.image {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 12px;
+    z-index: -1;
+}
+
+.equipmentInfo {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+    justify-content: center;
+}
