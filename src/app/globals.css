@@ -94,3 +94,107 @@ a {
     margin-bottom: 20px;
   }
 }
+
+.rdrCalendarWrapper,
+.rdrDateRangeWrapper,
+.rdrDefinedRangesWrapper {
+  background: #202020 !important;
+}
+
+.date-range-picker {
+  width: 100%;
+}
+
+.rdrCalendarWrapper,
+.rdrDateRangeWrapper {
+  border-bottom-right-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.rdrDateDisplayWrapper {
+  border-top-right-radius: 12px;
+}
+
+.rdrCalendarWrapper {
+  border-top-right-radius: 12px;
+}
+
+.rdrDefinedRangesWrapper {
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  overflow: hidden;
+}
+
+.rdrStaticRanges {
+  border-top-left-radius: 12px;
+}
+
+.rdrMonths,
+.rdrMonthsVertical {
+  border-bottom-right-radius: 12px;
+}
+
+.rdrStaticRange {
+  background: #121212 !important;
+  color: white !important;
+}
+
+.rdrStaticRangeSelected {
+  color: #f7c30f !important;
+}
+.rdrDateDisplayWrapper {
+  background: #121212 !important;
+}
+
+.rdrDayNumber span {
+  color: #ffffff !important;
+}
+
+.rdrDayDisabled {
+  background: #121212 !important;
+}
+
+@media (max-width: 800px) {
+  .rdrDateRangePickerWrapper {
+    padding: 0 5px;
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+
+    span {
+      font-size: 14px !important;
+    }
+  }
+
+  .rdrStaticRanges {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 260px;
+  }
+
+  .rdrDefinedRangesWrapper {
+    width: 100%;
+    display: none;
+  }
+
+  .rdrStaticRangeLabel {
+    padding: 4px 8px;
+  }
+
+  .rdrStaticRange {
+    margin-bottom: 5px;
+  }
+
+  .rdrMonthPicker,
+  .rdrYearPicker {
+    margin: 0;
+    width: 100%;
+  }
+
+  .rdrWeekDays,
+  .rdrDays,
+  .rdrMonth {
+    max-width: 260px;
+  }
+}

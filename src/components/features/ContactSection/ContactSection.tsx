@@ -59,8 +59,8 @@ const ContactSection: React.FC = () => {
             <p className={styles.successMessage}>Ваше сообщение отправлено!</p>
           )}
           <div className={styles.formGroup}>
-            <label htmlFor="name">Имя</label>
             <Input
+              label="Имя"
               type="text"
               id="name"
               name="name"
@@ -70,8 +70,8 @@ const ContactSection: React.FC = () => {
             />
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="email">Email</label>
             <Input
+              label="Email"
               type="email"
               id="email"
               name="email"
@@ -81,14 +81,13 @@ const ContactSection: React.FC = () => {
             />
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="message">Сообщение</label>
-            <textarea
+            <Input
+              label="Сообщение"
               id="message"
               name="message"
               value={formData.message}
               onChange={handleChange}
-              rows={4}
-              required></textarea>
+              required></Input>
           </div>
           <button type="submit" className={styles.submitButton}>
             Отправить

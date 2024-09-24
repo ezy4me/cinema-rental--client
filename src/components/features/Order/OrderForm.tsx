@@ -8,9 +8,12 @@ import Input from "@/components/ui/Input/Input";
 import { Equipment } from "@/types/equipment";
 import Select from "@/components/ui/Select/Select";
 import { addCustomerInfo } from "@/services/customer.api";
-import { addUserRental } from "@/services/rental.api"; // Import the addUserRental function
+import { addUserRental } from "@/services/rental.api";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Notification from "@/components/ui/Notification/Notification";
+import DateRangePicker from "@/components/ui/DateRangePicker/CustomDateRangePicker";
+import { useTranslation } from "react-i18next";
 
 interface OrderItem {
   id: number;
@@ -40,8 +43,27 @@ interface OrderFormProps {
 
 const OrderForm: React.FC<OrderFormProps> = ({ items, customer }) => {
   const router = useRouter();
-  const [paymentMethod, setPaymentMethod] = useState<string>("");
+  const { t, i18n } = useTranslation();
+
   const { data: session } = useSession();
+  const [paymentMethod, setPaymentMethod] = useState<string>("");
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [notificationType, setNotificationType] = useState<"success" | "error">(
+    "success"
+  );
+
+  const [rentalPeriod, setRentalPeriod] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+    key: "selection",
+  });
+
+  const onDateRangeChange = (ranges: any) => {
+    setRentalPeriod(ranges);
+    console.log(ranges);
+    
+  };
 
   const {
     register,
@@ -59,17 +81,46 @@ const OrderForm: React.FC<OrderFormProps> = ({ items, customer }) => {
     }
   }, [customer, setValue]);
 
+  const calculateRentalDays = () => {
+    const timeDiff = Math.abs(
+      rentalPeriod.endDate.getTime() - rentalPeriod.startDate.getTime()
+    );
+    return Math.ceil(timeDiff / (1000 * 3600 * 24)) || 1;
+  };
+
   const calculateTotalPrice = () => {
+    const rentalDays = calculateRentalDays();
     return items.reduce(
       (total, item) =>
-        total + Number(item.equipment.pricePerDay) * item.quantity,
+        total + Number(item.equipment.pricePerDay) * item.quantity * rentalDays,
       0
     );
   };
 
+  const handleDateRangeChange = (ranges: any) => {
+    const { startDate, endDate } = ranges.selection;
+
+    if (startDate) {
+      const calculatedEndDate = endDate
+        ? new Date(endDate)
+        : new Date(startDate);
+      if (!endDate) {
+        calculatedEndDate.setDate(startDate.getDate() + 7);
+      }
+
+      const newDateRange = {
+        startDate: new Date(startDate),
+        endDate: calculatedEndDate,
+        key: "selection",
+      };
+
+      setRentalPeriod(newDateRange);
+    }
+  };
+
   const onSubmit = async (data: OrderFormData) => {
     try {
-      console.log("Order Details: ", { ...data, paymentMethod });
+      console.log("Order Details: ", { ...data, paymentMethod, rentalPeriod });
 
       if (!customer) {
         const customerData = { ...data };
@@ -81,8 +132,8 @@ const OrderForm: React.FC<OrderFormProps> = ({ items, customer }) => {
       }
 
       const rentalData = {
-        startDate: new Date().toISOString(),
-        endDate: new Date().toISOString(),
+        startDate: rentalPeriod.startDate.toISOString(),
+        endDate: rentalPeriod.endDate.toISOString(),
         totalAmount: calculateTotalPrice(),
         userId: session?.user.id!,
       };
@@ -94,17 +145,32 @@ const OrderForm: React.FC<OrderFormProps> = ({ items, customer }) => {
 
       await addUserRental(rentalData, session?.accessToken!, equipments);
 
+      setNotificationMessage("Заказ успешно оформлен!");
+      setNotificationType("success");
+      setShowNotification(true);
+
       router.push("/profile");
     } catch (error) {
       console.error(
         "Ошибка при отправке информации о клиенте или аренде",
         error
       );
+      setNotificationMessage("Произошла ошибка при оформлении заказа.");
+      setNotificationType("error");
+      setShowNotification(true);
     }
   };
 
   return (
     <div className="container">
+      {showNotification && (
+        <Notification
+          message={notificationMessage}
+          type={notificationType}
+          onClose={() => setShowNotification(false)}
+        />
+      )}
+
       <form className={styles.orderForm} onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.field}>
           <Input
@@ -168,6 +234,10 @@ const OrderForm: React.FC<OrderFormProps> = ({ items, customer }) => {
             onChange={setPaymentMethod}
             error={errors.paymentMethod?.message}
           />
+        </div>
+
+        <div className={styles.field}>
+          <DateRangePicker onDateRangeChange={onDateRangeChange} />
         </div>
 
         <Button type="submit" className={styles.submitButton}>

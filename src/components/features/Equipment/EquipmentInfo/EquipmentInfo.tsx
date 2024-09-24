@@ -10,12 +10,19 @@ import Button from "@/components/ui/Button/Button";
 import { getBrandById } from "@/services/brand.api";
 import { addCartEquipment } from "@/services/cart.api";
 import { useSession } from "next-auth/react";
+import Notification from "@/components/ui/Notification/Notification";
 
 const EquipmentInfo: React.FC = () => {
   const params = useParams<{ id: string }>();
   const [equipment, setEquipment] = useState<Equipment | null>(null);
   const [brandName, setBrandName] = useState<string>("");
   const [image, setImage] = useState<string | null>(null);
+  const [showNotification, setShowNotification] = useState(false); 
+  const [notificationMessage, setNotificationMessage] = useState(""); 
+  const [notificationType, setNotificationType] = useState<
+    "success" | "error"
+  >("success"); 
+
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -40,9 +47,16 @@ const EquipmentInfo: React.FC = () => {
     if (equipment && session?.user?.id && session.accessToken) {
       try {
         await addCartEquipment(session.user.id, equipment.id, session.accessToken);
-        alert('Товар добавлен в корзину!');
+        
+        setNotificationMessage("Товар успешно добавлен в корзину!"); 
+        setNotificationType("success");
+        setShowNotification(true); 
       } catch (error) {
         console.error("Error adding item to cart:", error);
+        
+        setNotificationMessage("Ошибка при добавлении товара в корзину.");
+        setNotificationType("error");
+        setShowNotification(true); 
       }
     } else {
       console.error("User ID or access token is missing");
@@ -51,6 +65,14 @@ const EquipmentInfo: React.FC = () => {
 
   return (
     <section>
+      {showNotification && (
+        <Notification
+          message={notificationMessage}
+          type={notificationType}
+          onClose={() => setShowNotification(false)} 
+        />
+      )}
+
       <div className={styles.equipmentInfo}>
         <h1 className={styles.equipmentName}>{equipment?.name}</h1>
         <h2 className={styles.equipmentBrand}>{brandName}</h2>
@@ -61,8 +83,7 @@ const EquipmentInfo: React.FC = () => {
         </div>
 
         <p className={styles.equipmentPrice}>
-          Цена: <span>${parseFloat(equipment?.pricePerDay!).toFixed(2)}</span> /
-          день
+          Цена: <span>{parseFloat(equipment?.pricePerDay!).toFixed(2)}</span> ₽ / день
         </p>
         <div className={styles.actions}>
           <div className={styles.equipmentQuantity}>

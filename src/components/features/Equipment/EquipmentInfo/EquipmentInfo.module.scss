@@ -18,15 +18,29 @@
   font-size: 2rem;
   margin-bottom: 10px;
   text-transform: uppercase;
-  color: #202020;
+  color: #e4e4e4;
 }
 
 .equipmentDescription {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  position: relative;
+  margin-left: 16px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -16px;
+    height: 100%;
+    width: 4px;
+    border-radius: 8px;
+    background-color: #f7c30f;
+  }
   
   p {
+    text-align: start;
     font-size: 1.5rem;
   }
 }

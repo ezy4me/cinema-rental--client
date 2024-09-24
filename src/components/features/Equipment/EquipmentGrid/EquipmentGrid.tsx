@@ -169,7 +169,7 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({
                     <img
                       src={item.image || "/images/placeholder.png"}
                       alt={item.name}
-                      className={styles.equipmentImage}
+                      className={styles.image}
                     />
                   </div>
                   <div className={styles.equipmentInfo}>
@@ -178,7 +178,7 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({
                       {item.description}
                     </p>
                     <p className={styles.equipmentPrice}>
-                      ${parseFloat(item.pricePerDay).toFixed(2)} / день
+                      {parseFloat(item.pricePerDay)} ₽ / день
                     </p>
                     <p className={styles.equipmentQuantity}>
                       Количество: {item.quantity}
