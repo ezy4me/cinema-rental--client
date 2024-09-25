@@ -3,7 +3,7 @@ import { getCustomers } from "@/services/customer.api";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-import UsersDataGrid from "@/components/dashboard/datagrids/UsersDataGrid";
+import UsersDataGrid from "@/components/dashboard/DataGrids/UsersDataGrid";
 
 const UsersPage: React.FC = async () => {
   const session = await getServerSession(authOptions);

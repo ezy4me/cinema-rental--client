@@ -5,12 +5,10 @@ import styles from "./RentalItem.module.scss";
 import { fetchImageUrl } from "@/utils/fetchImageUrl";
 
 const RentalItem: React.FC<{ rental: any }> = ({ rental }) => {
-  // State to store images for each equipment in the rental
   const [equipmentImages, setEquipmentImages] = useState<{ [key: number]: string | null }>({});
 
   useEffect(() => {
     const fetchImages = async () => {
-      // Loop over each equipment to fetch its image
       const images: { [key: number]: string | null } = {};
       for (const item of rental.rentalEquipment) {
         try {
