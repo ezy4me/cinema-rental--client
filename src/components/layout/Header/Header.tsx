@@ -16,20 +16,33 @@ import Sidebar from "../Sidebar/Sidebar";
 import Modal from "@/components/ui/Modal/Modal";
 import AuthForm from "@/components/features/Forms/Auth/AuthForm";
 import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation"; // Импортируйте usePathname
 
 const Header = () => {
   const router = useRouter();
+  const pathname = usePathname(); // Получаем текущий маршрут
   const { data: session, status } = useSession();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
+  const handleProfileClick = () => {
+    if (session?.user?.role === "ADMIN") {
+      router.push("/dashboard");
+    } else {
+      router.push("/profile");
+    }
+  };
+
   useEffect(() => {}, [session]);
+
+  // Условие для скрытия Header на страницах dashboard
+  if (pathname.startsWith("/dashboard")) {
+    return null; // Если текущий путь начинается с /dashboard, то Header не отображается
+  }
 
   return (
     <>
@@ -54,12 +67,12 @@ const Header = () => {
               <Link href="/equipment">Оборудование</Link>
             </li>
             <li>
-              <Link href="/contact">Контакты</Link>
+              <Link href="/#contact">Контакты</Link>
             </li>
             {status === "authenticated" ? (
               <>
                 <li className={styles.icon}>
-                  <FaUser size={24} onClick={() => router.push("/profile")} />
+                  <FaUser size={24} onClick={handleProfileClick} />
                 </li>
                 <li className={styles.icon}>
                   <FaDoorOpen size={32} onClick={() => signOut()} />

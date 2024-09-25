@@ -61,6 +61,7 @@ export const authOptions: NextAuthOptions = {
             headers: {
               "Content-Type": "application/json",
             },
+            credentials: 'include',
           }
         );
 
@@ -71,7 +72,7 @@ export const authOptions: NextAuthOptions = {
 
         const user = await res.json();
 
-        console.log(user);
+        // console.log(user);
 
         return user;
       },

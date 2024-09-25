@@ -8,6 +8,7 @@ import Input from "@/components/ui/Input/Input";
 import Button from "@/components/ui/Button/Button";
 import { register } from "@/services/auth.api";
 import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface AuthFormProps {
   onClose: () => void;
@@ -22,6 +23,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onClose }) => {
   const [isRegister, setIsRegister] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const { data: session } = useSession();
+  const router = useRouter();
 
   const {
     register: registerInput,
@@ -48,10 +50,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ onClose }) => {
         const response = await signIn("credentials", {
           email: data.email,
           password: data.password,
-          redirect: false,
+          redirect: true,
         });
 
         console.log("Вход успешен", response);
+
         onClose();
       }
     } catch (error) {
@@ -61,8 +64,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ onClose }) => {
   };
 
   useEffect(() => {
-    if (session) localStorage.setItem("accessToken", session?.accessToken);
-  }, [session]);
+    if (session?.user.role === "ADMIN") {
+      router.push("/dashboard");
+    }
+  }, [session, router]);
 
   return (
     <div className={styles.authForm}>

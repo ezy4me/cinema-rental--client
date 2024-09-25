@@ -6,7 +6,9 @@ import Footer from "@/components/layout/Footer/Footer";
 import BackgroundLines from "../components/layout/BackgroundLines/BackgroundLines";
 import Cart from "@/components/features/Cart/Cart";
 import Providers from "@/components/Providers/Providers";
-import { Session } from "next-auth";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 
 export const metadata: Metadata = {
   title: "Аренда кинооборудования",
@@ -16,23 +18,33 @@ export const metadata: Metadata = {
 
 const interTight = Inter_Tight({ subsets: ["latin"] });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-  session,
 }: {
   children: React.ReactNode;
-  session: Session;
 }) {
+  const session = await getServerSession(authOptions);
+
+  console.log(session);
+
+  const isAdmin = session?.user?.role === "ADMIN";
+
   return (
     <html lang="en">
       <body className={interTight.className}>
-        <Providers session={session}>
-          <Header />
-          <BackgroundLines />
-          <Cart />
-          <main>{children}</main>
-          <Footer />
-        </Providers>
+        <AppRouterCacheProvider>
+          <Providers>
+            <Header />
+            {!isAdmin && (
+              <>
+                <BackgroundLines />
+                <Cart />
+              </>
+            )}
+            <main>{children}</main>
+            {!isAdmin && <Footer />}
+          </Providers>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );
