@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -10,7 +10,10 @@ import {
   List,
   ListItem,
   ListItemText,
+  Avatar,
 } from "@mui/material";
+import { fetchImageUrl } from "@/utils/fetchImageUrl";
+
 
 interface Equipment {
   id: number;
@@ -18,6 +21,7 @@ interface Equipment {
   description: string;
   pricePerDay: string;
   quantity: number;
+  fileId: number;
 }
 
 interface RentalEquipment {
@@ -42,6 +46,28 @@ interface UserOrdersProps {
 }
 
 const UserRentals: React.FC<UserOrdersProps> = ({ rentals }) => {
+  const [imageUrls, setImageUrls] = useState<{ [key: number]: string }>({});
+
+  const loadImageUrls = async () => {
+    const urls: { [key: number]: string } = {};
+    for (const rental of rentals) {
+      for (const rentalItem of rental.rentalEquipment) {
+        const { equipment } = rentalItem;
+        try {
+          const url = await fetchImageUrl(equipment.fileId);
+          urls[equipment.id] = url;
+        } catch (error) {
+          console.error("Ошибка загрузки изображения", error);
+        }
+      }
+    }
+    setImageUrls(urls);
+  };
+
+  useEffect(() => {
+    loadImageUrls();
+  }, [rentals]);
+
   return (
     <Box sx={{ padding: 3 }}>
       <Grid container spacing={3}>
@@ -51,8 +77,7 @@ const UserRentals: React.FC<UserOrdersProps> = ({ rentals }) => {
               <CardContent>
                 <Typography variant="h6">Заказ № {rental.id}</Typography>
                 <Typography>
-                  Дата начала:{" "}
-                  {new Date(rental.startDate).toLocaleDateString()}
+                  Дата начала: {new Date(rental.startDate).toLocaleDateString()}
                 </Typography>
                 <Typography>
                   Дата окончания:{" "}
@@ -65,6 +90,11 @@ const UserRentals: React.FC<UserOrdersProps> = ({ rentals }) => {
                 <List>
                   {rental.rentalEquipment.map((rentalItem) => (
                     <ListItem key={rentalItem.id}>
+                      <Avatar
+                        src={imageUrls[rentalItem.equipment.id] || ""}
+                        alt={rentalItem.equipment.name}
+                        sx={{ width: 56, height: 56, marginRight: 2 }}
+                      />
                       <ListItemText
                         primary={`${rentalItem.equipment.name} — ${rentalItem.quantity} шт.`}
                         secondary={`Цена за день: ${rentalItem.equipment.pricePerDay} ₽`}
