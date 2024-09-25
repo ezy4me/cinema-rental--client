@@ -1,12 +1,17 @@
 import React from "react";
-import { Typography } from "@mui/material";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getEquipments } from "@/services/equipment.api";
+import EquipmentDataGrid from "@/components/dashboard/datagrids/EquipmentDataGrid";
 
-const EquipmentsPage: React.FC = () => {
+const EquipmentsPage: React.FC = async () => {
+  const session = await getServerSession(authOptions);
+  let equipments: any = [];
+  if (session) equipments = await getEquipments();
+
   return (
     <div>
-      <Typography variant="h4" gutterBottom>
-        Welcome to your EQUIPMENTS PAGE!
-      </Typography>
+      <EquipmentDataGrid equipments={equipments} />
     </div>
   );
 };

@@ -1,13 +1,18 @@
-
 import React from "react";
-import { Typography } from "@mui/material";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import EquipmentDataGrid from "@/components/dashboard/datagrids/EquipmentDataGrid";
+import { getRentals } from "@/services/rental.api";
+import RentalDataGrid from "@/components/dashboard/datagrids/RentalDataGrid";
 
-const OrdersPage: React.FC = () => {
+const OrdersPage: React.FC = async () => {
+  const session = await getServerSession(authOptions);
+  let rentals: any = [];
+  if (session) rentals = await getRentals();
+
   return (
     <div>
-      <Typography variant="h4" gutterBottom>
-        Welcome to your ORDERS PAGE!
-      </Typography>
+      <RentalDataGrid rentals={rentals} />
     </div>
   );
 };

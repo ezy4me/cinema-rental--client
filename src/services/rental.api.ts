@@ -1,5 +1,10 @@
 import { apiInstance } from ".";
 
+export const getRentals = async () => {
+  const response = await apiInstance.get("/rental");
+  return response.data;
+};
+
 export const getUserRentals = async (userId: number): Promise<any> => {
   try {
     const response = await apiInstance.get(`/rental/user/${userId}`);

@@ -1,13 +1,17 @@
-
 import React from "react";
-import { Typography } from "@mui/material";
+import { getCustomers } from "@/services/customer.api";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-const UsersPage: React.FC = () => {
+import UsersDataGrid from "@/components/dashboard/datagrids/UsersDataGrid";
+
+const UsersPage: React.FC = async () => {
+  const session = await getServerSession(authOptions);
+  let customers: any = [];
+  if (session) customers = await getCustomers(session?.accessToken);
   return (
     <div>
-      <Typography variant="h4" gutterBottom>
-        Welcome to your USERS PAGE!
-      </Typography>
+      <UsersDataGrid users={customers} />
     </div>
   );
 };

@@ -34,7 +34,7 @@ const Sidebar: React.FC = () => {
         [`& .MuiDrawer-paper`]: {
           width: drawerWidth,
           boxSizing: "border-box",
-          backgroundColor: "#202020",
+          backgroundColor: "#121212",
           color: "#fff",
         },
       }}>
@@ -43,7 +43,7 @@ const Sidebar: React.FC = () => {
           component={Link}
           href="/dashboard"
           sx={{
-            backgroundColor: pathname === "/dashboard" ? "#333" : "transparent",
+            backgroundColor: pathname === "/dashboard" ? "#202020" : "transparent",
             color: pathname === "/dashboard" ? "#FFD900" : "#fff",
           }}>
           <ListItemIcon>
@@ -57,7 +57,7 @@ const Sidebar: React.FC = () => {
           href="/dashboard/users"
           sx={{
             backgroundColor:
-              pathname === "/dashboard/users" ? "#333" : "transparent",
+              pathname === "/dashboard/users" ? "#202020" : "transparent",
             color: pathname === "/dashboard/users" ? "#FFD900" : "#fff",
           }}>
           <ListItemIcon>
@@ -71,7 +71,7 @@ const Sidebar: React.FC = () => {
           href="/dashboard/equipments"
           sx={{
             backgroundColor:
-              pathname === "/dashboard/equipments" ? "#333" : "transparent",
+              pathname === "/dashboard/equipments" ? "#202020" : "transparent",
             color: pathname === "/dashboard/equipments" ? "#FFD900" : "#fff",
           }}>
           <ListItemIcon>
@@ -85,7 +85,7 @@ const Sidebar: React.FC = () => {
           href="/dashboard/orders"
           sx={{
             backgroundColor:
-              pathname === "/dashboard/orders" ? "#333" : "transparent",
+              pathname === "/dashboard/orders" ? "#202020" : "transparent",
             color: pathname === "/dashboard/orders" ? "#FFD900" : "#fff",
           }}>
           <ListItemIcon>
