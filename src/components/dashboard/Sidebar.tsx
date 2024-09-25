@@ -1,43 +1,114 @@
+"use client";
+
 import React from "react";
-import { Drawer, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
-import { Home, Settings, Dashboard } from "@mui/icons-material";
+import {
+  Button,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
+import {
+  Person,
+  DoorBack,
+  Dashboard,
+  Inventory,
+  Alarm,
+} from "@mui/icons-material";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
+import { usePathname } from "next/navigation";
 
 const drawerWidth = 240;
 
 const Sidebar: React.FC = () => {
+  const pathname = usePathname();
+
   return (
     <Drawer
       variant="permanent"
       sx={{
         width: drawerWidth,
         flexShrink: 0,
-        [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: "border-box" },
-      }}
-    >
+        [`& .MuiDrawer-paper`]: {
+          width: drawerWidth,
+          boxSizing: "border-box",
+          backgroundColor: "#202020",
+          color: "#fff",
+        },
+      }}>
       <List>
-        {/* Dashboard Link */}
-        <ListItem component={Link} href="/dashboard">
+        <ListItem
+          component={Link}
+          href="/dashboard"
+          sx={{
+            backgroundColor: pathname === "/dashboard" ? "#333" : "transparent",
+            color: pathname === "/dashboard" ? "#FFD900" : "#fff",
+          }}>
           <ListItemIcon>
-            <Dashboard />
+            <Dashboard sx={{ color: "#fff" }} />
           </ListItemIcon>
-          <ListItemText primary="Dashboard" />
+          <ListItemText primary="Главная" />
         </ListItem>
 
-        {/* Home Link */}
-        <ListItem component={Link} href="/">
+        <ListItem
+          component={Link}
+          href="/dashboard/users"
+          sx={{
+            backgroundColor:
+              pathname === "/dashboard/users" ? "#333" : "transparent",
+            color: pathname === "/dashboard/users" ? "#FFD900" : "#fff",
+          }}>
           <ListItemIcon>
-            <Home />
+            <Person sx={{ color: "#fff" }} />
           </ListItemIcon>
-          <ListItemText primary="Home" />
+          <ListItemText primary="Пользователи" />
         </ListItem>
 
-        {/* Settings Link */}
-        <ListItem component={Link} href="/settings">
+        <ListItem
+          component={Link}
+          href="/dashboard/equipments"
+          sx={{
+            backgroundColor:
+              pathname === "/dashboard/equipments" ? "#333" : "transparent",
+            color: pathname === "/dashboard/equipments" ? "#FFD900" : "#fff",
+          }}>
           <ListItemIcon>
-            <Settings />
+            <Inventory sx={{ color: "#fff" }} />
           </ListItemIcon>
-          <ListItemText primary="Settings" />
+          <ListItemText primary="Оборудование" />
+        </ListItem>
+
+        <ListItem
+          component={Link}
+          href="/dashboard/orders"
+          sx={{
+            backgroundColor:
+              pathname === "/dashboard/orders" ? "#333" : "transparent",
+            color: pathname === "/dashboard/orders" ? "#FFD900" : "#fff",
+          }}>
+          <ListItemIcon>
+            <Alarm sx={{ color: "#fff" }} />
+          </ListItemIcon>
+          <ListItemText primary="Заказы" />
+        </ListItem>
+
+        <ListItem
+          component={Button}
+          onClick={() => signOut()}
+          sx={{
+            backgroundColor: "#FFD900", 
+            color: "#202020",
+            "&:hover": {
+              backgroundColor: "#FFC107", 
+              color: "#fff", 
+            },
+          }}>
+          <ListItemIcon>
+            <DoorBack sx={{ color: "#202020" }} />
+          </ListItemIcon>
+          <ListItemText primary="Выход" />
         </ListItem>
       </List>
     </Drawer>

@@ -4,7 +4,7 @@ import { Menu as MenuIcon } from "@mui/icons-material";
 
 const TopBar: React.FC = () => {
   return (
-    <AppBar position="fixed">
+    <AppBar position="fixed" sx={{ backgroundColor: "#ffd900"}}>
       <Toolbar>
         <IconButton
           edge="start"
