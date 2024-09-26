@@ -11,6 +11,58 @@ export const getEquipmentById = async (id: string): Promise<Equipment> => {
   return response.data;
 };
 
+export const addEquipment = async (data: any, accessToken: string) => {
+  const formData = new FormData();
+
+  formData.append("name", data.name);
+  formData.append("description", data.description);
+  formData.append("pricePerDay", data.pricePerDay.toString());
+  formData.append("quantity", data.quantity.toString());
+  formData.append("categoryId", data.categoryId);
+  formData.append("brandId", data.brandId);
+
+  if (data.file) {
+    formData.append("file", data.file);
+  }
+
+  const response = await apiInstance.post("/equipment", formData, {
+    headers: {
+      Authorization: `${accessToken}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data;
+};
+
+export const updateEquipment = async (
+  id: number,
+  data: any,
+  accessToken: string
+) => {
+  const formData = new FormData();
+
+  formData.append("name", data.name);
+  formData.append("description", data.description);
+  formData.append("pricePerDay", data.pricePerDay.toString());
+  formData.append("quantity", data.quantity.toString());
+  formData.append("categoryId", data.categoryId);
+  formData.append("brandId", data.brandId);
+
+  if (data.file) {
+    formData.append("file", data.file);
+  }
+
+  const response = await apiInstance.put(`/equipment/${id}`, formData, {
+    headers: {
+      Authorization: `${accessToken}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data;
+};
+
 export const deleteEquipmentById = async (
   id: string,
   accessToken: string

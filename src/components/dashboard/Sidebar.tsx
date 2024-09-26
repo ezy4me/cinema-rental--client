@@ -41,7 +41,7 @@ const Sidebar: React.FC = () => {
       <List>
         <ListItem
           component={Link}
-          href="/dashboard"
+          href="/"
           sx={{
             backgroundColor: pathname === "/dashboard" ? "#202020" : "transparent",
             color: pathname === "/dashboard" ? "#FFD900" : "#fff",

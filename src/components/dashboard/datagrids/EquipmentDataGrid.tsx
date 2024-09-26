@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -11,23 +11,33 @@ import {
 } from "@mui/x-data-grid";
 import { fetchImageUrl } from "@/utils/fetchImageUrl";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { deleteEquipmentById } from "@/services/equipment.api";
+import EditIcon from "@mui/icons-material/Edit";
+import { deleteEquipmentById, getEquipments } from "@/services/equipment.api";
 import { useSession } from "next-auth/react";
+import ConfirmDelete from "../ConfirmDelete";
+import EquipmentForm from "../Equipment/EquipmentForm";
+import EditEquipmentForm from "../Equipment/EditEquipmentForm";
 
-interface EquipmentDataGridProps {
-  equipments: any[];
-}
-
-const EquipmentDataGrid: React.FC<EquipmentDataGridProps> = ({
-  equipments,
-}) => {
+const EquipmentDataGrid: React.FC = () => {
   const { data: session } = useSession();
   const [rows, setRows] = useState<any[]>([]);
   const [imageUrls, setImageUrls] = useState<{ [key: string]: string }>({});
 
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [selectedEquipment, setSelectedEquipment] = useState<any>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editFormOpen, setEditFormOpen] = useState(false);
+  const [selectedEquipmentForEdit, setSelectedEquipmentForEdit] =
+    useState<any>(null);
+
+  const fetchData = async () => {
+    const equipments = await getEquipments();
+    setRows(equipments);
+  };
+
   const loadImageUrls = async () => {
     const urls: { [key: string]: string } = {};
-    for (const equipment of equipments) {
+    for (const equipment of rows) {
       try {
         const url = await fetchImageUrl(equipment.fileId);
         urls[equipment.id] = url;
@@ -39,14 +49,54 @@ const EquipmentDataGrid: React.FC<EquipmentDataGridProps> = ({
   };
 
   useEffect(() => {
-    if (equipments) {
-      setRows(equipments);
-    }
-  }, [equipments]);
+    fetchData();
+  }, []);
 
   useEffect(() => {
-    loadImageUrls();
-  }, [equipments]);
+    if (rows.length) {
+      loadImageUrls();
+    }
+  }, [rows]);
+
+  const handleDeleteClick = (id: GridRowId) => () => {
+    const equipment = rows.find((row) => row.id === id);
+    setSelectedEquipment(equipment);
+    setDeleteOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (selectedEquipment) {
+      await deleteEquipmentById(
+        selectedEquipment.id.toString(),
+        session?.accessToken!
+      );
+      setRows((prevRows) =>
+        prevRows.filter((row) => row.id !== selectedEquipment.id)
+      );
+    }
+    setDeleteOpen(false);
+  };
+
+  const handleDeleteClose = () => {
+    setDeleteOpen(false);
+  };
+
+  const handleFormOpen = () => {
+    setFormOpen(true);
+  };
+
+  const handleFormClose = () => {
+    setFormOpen(false);
+  };
+
+  const handleEditClick = (equipment: any) => () => {
+    setSelectedEquipmentForEdit(equipment);
+    setEditFormOpen(true);
+  };
+
+  const handleEditFormClose = () => {
+    setEditFormOpen(false);
+  };
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 90 },
@@ -58,7 +108,7 @@ const EquipmentDataGrid: React.FC<EquipmentDataGridProps> = ({
       renderCell: (params) => (
         <Stack direction={"row"} alignItems={"center"} mt={0.5}>
           <img
-            src={imageUrls[params.row.id]}
+            src={imageUrls[params.row.id] || "/images/placeholder.png"}
             alt={params.row.name}
             style={{
               width: 40,
@@ -70,12 +120,7 @@ const EquipmentDataGrid: React.FC<EquipmentDataGridProps> = ({
         </Stack>
       ),
     },
-    {
-      field: "name",
-      headerName: "Название",
-      width: 150,
-      editable: true,
-    },
+    { field: "name", headerName: "Название", width: 150, editable: true },
     {
       field: "description",
       headerName: "Описание",
@@ -88,12 +133,7 @@ const EquipmentDataGrid: React.FC<EquipmentDataGridProps> = ({
       width: 110,
       editable: true,
     },
-    {
-      field: "quantity",
-      headerName: "Количество",
-      sortable: true,
-      width: 160,
-    },
+    { field: "quantity", headerName: "Количество", sortable: true, width: 160 },
     {
       field: "category",
       headerName: "Категория",
@@ -124,33 +164,37 @@ const EquipmentDataGrid: React.FC<EquipmentDataGridProps> = ({
       headerName: "Действия",
       cellClassName: "actions",
       width: 200,
-      getActions: ({ id }) => {
-        return [
-          <GridActionsCellItem
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-            }}
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="inherit"
-          />,
-        ];
-      },
+      getActions: ({ id, row }) => [
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Delete"
+          onClick={handleDeleteClick(id)}
+          color="inherit"
+        />,
+        <GridActionsCellItem
+          icon={<EditIcon />}
+          label="Edit"
+          onClick={handleEditClick(row)}
+          color="inherit"
+        />,
+      ],
     },
   ];
 
-  const handleDeleteClick = (id: GridRowId) => async () => {
-    await deleteEquipmentById(id.toString(), session?.accessToken!);
-    setRows(rows.filter((row: any) => row.id !== id));
-  };
-
   return (
     <div>
-      <Typography color="#000" variant="h4" gutterBottom>
-        Оборудование CRS
-      </Typography>
+      <Stack flexDirection={"row"} alignItems={"center"} mb={2} gap={4}>
+        <Typography color="#000" variant="h4">
+          Оборудование CRS
+        </Typography>
+        <Button
+          sx={{ backgroundColor: "#000" }}
+          variant="contained"
+          onClick={handleFormOpen}>
+          Добавить
+        </Button>
+      </Stack>
+
       <DataGrid
         rows={rows}
         columns={columns}
@@ -169,13 +213,36 @@ const EquipmentDataGrid: React.FC<EquipmentDataGridProps> = ({
           [`& .${gridClasses.cell}`]: {
             py: 1,
             alignItems: "flex-start",
-
           },
         }}
         pageSizeOptions={[20]}
         checkboxSelection
         disableRowSelectionOnClick
       />
+
+      {selectedEquipment && (
+        <ConfirmDelete
+          open={deleteOpen}
+          handleClose={handleDeleteClose}
+          handleConfirm={handleDeleteConfirm}
+          itemName={selectedEquipment.name}
+        />
+      )}
+
+      <EquipmentForm
+        open={formOpen}
+        handleClose={handleFormClose}
+        onEquipmentAdded={fetchData}
+      />
+
+      {selectedEquipmentForEdit && (
+        <EditEquipmentForm
+          open={editFormOpen}
+          handleClose={handleEditFormClose}
+          equipment={selectedEquipmentForEdit}
+          onEquipmentUpdated={fetchData}
+        />
+      )}
     </div>
   );
 };
