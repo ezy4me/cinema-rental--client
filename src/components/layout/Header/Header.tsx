@@ -31,7 +31,7 @@ const Header = () => {
 
   const handleProfileClick = () => {
     if (session?.user?.role === "ADMIN") {
-      router.push("/dashboard");
+      router.push("/dashboard/users");
     } else {
       router.push("/profile");
     }
@@ -39,9 +39,8 @@ const Header = () => {
 
   useEffect(() => {}, [session]);
 
-  // Условие для скрытия Header на страницах dashboard
   if (pathname.startsWith("/dashboard")) {
-    return null; // Если текущий путь начинается с /dashboard, то Header не отображается
+    return null; 
   }
 
   return (

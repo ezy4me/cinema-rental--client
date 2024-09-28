@@ -31,6 +31,15 @@ const Sidebar = ({
     }
   };
 
+  const handleProfileClick = () => {
+    if (session?.user?.role === "ADMIN") {
+      router.push("/dashboard/users");
+    } else {
+      router.push("/profile");
+    }
+    onClose(); 
+  };
+
   return (
     <div
       className={isOpen ? styles.sidebarBackdrop : ""}
@@ -54,7 +63,7 @@ const Sidebar = ({
             {status === "authenticated" ? (
               <>
                 <li className={styles.icon}>
-                  <FaUser size={24} onClick={() => router.push("/profile")} />
+                  <FaUser size={24} onClick={handleProfileClick} />
                 </li>
                 <li className={styles.icon}>
                   <FaDoorOpen size={32} onClick={() => signOut()} />
