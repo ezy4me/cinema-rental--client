@@ -2,6 +2,8 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import styles from "./ContactSection.module.scss";
 import Input from "@/components/ui/Input/Input";
+import { sendSelfMail } from "@/services/smtp.api";
+import Notification from "@/components/ui/Notification/Notification"; // Импорт уведомлений
 
 interface FormData {
   name: string;
@@ -15,7 +17,9 @@ const ContactSection: React.FC = () => {
     email: "",
     message: "",
   });
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [showNotification, setShowNotification] = useState(false); // Состояние для показа уведомлений
+  const [notificationMessage, setNotificationMessage] = useState(""); 
+  const [notificationType, setNotificationType] = useState<"success" | "error">("success"); 
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -27,13 +31,36 @@ const ContactSection: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setNotificationMessage(""); // Очищаем предыдущее сообщение уведомления
+
+    const subject = `${formData.name} - ${formData.email}`; 
+
+    try {
+      await sendSelfMail(subject, formData.message);
+      setNotificationMessage("Ваше сообщение отправлено!");
+      setNotificationType("success");
+      setShowNotification(true); 
+      
+      // Очищаем форму после успешной отправки
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      setNotificationMessage("Ошибка отправки сообщения. Попробуйте еще раз.");
+      setNotificationType("error");
+      setShowNotification(true); 
+    }
   };
 
   return (
     <section id="contact" className={styles.contactSection}>
+      {showNotification && (
+        <Notification
+          message={notificationMessage}
+          type={notificationType}
+          onClose={() => setShowNotification(false)} // Обработчик для закрытия уведомления
+        />
+      )}
       <h2 className="title">Контакты</h2>
       <div className={styles.container}>
         <div className={styles.info}>
@@ -55,9 +82,6 @@ const ContactSection: React.FC = () => {
           </div>
         </div>
         <form className={styles.form} onSubmit={handleSubmit}>
-          {isSubmitted && (
-            <p className={styles.successMessage}>Ваше сообщение отправлено!</p>
-          )}
           <div className={styles.formGroup}>
             <Input
               label="Имя"
@@ -87,7 +111,8 @@ const ContactSection: React.FC = () => {
               name="message"
               value={formData.message}
               onChange={handleChange}
-              required></Input>
+              required
+            />
           </div>
           <button type="submit" className={styles.submitButton}>
             Отправить
