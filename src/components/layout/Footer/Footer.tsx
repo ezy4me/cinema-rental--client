@@ -17,15 +17,6 @@ const Footer = () => {
             <li>
               <Link href="/equipment">Оборудование</Link>
             </li>
-            <li>
-              <Link href="/pricing">Цены</Link>
-            </li>
-            <li>
-              <Link href="/about">О нас</Link>
-            </li>
-            <li>
-              <Link href="/contact">Контакты</Link>
-            </li>
           </ul>
         </div>
 

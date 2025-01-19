@@ -165,7 +165,7 @@ const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: 400,
-          height: 600,
+          height: 900,
           overflow: "auto",
           bgcolor: "background.paper",
           boxShadow: 24,

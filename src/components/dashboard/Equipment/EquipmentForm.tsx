@@ -46,8 +46,8 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
     description: "",
     pricePerDay: 0,
     quantity: 1,
-    category: "2",
-    brand: "1",
+    category: "",
+    brand: "",
     file: null as File | null,
   });
 
@@ -60,6 +60,9 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
     description: "",
     pricePerDay: "",
     quantity: "",
+    category: "",
+    brand: "",
+    file: "",
   });
 
   useEffect(() => {
@@ -75,7 +78,7 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setErrors({ ...errors, [name]: "" }); 
+    setErrors({ ...errors, [name]: "" });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,7 +86,30 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
     if (file) {
       setFormData({ ...formData, file });
       setPreview(URL.createObjectURL(file));
+      setErrors({ ...errors, file: "" });
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      description: "",
+      pricePerDay: 0,
+      quantity: 1,
+      category: "",
+      brand: "",
+      file: null,
+    });
+    setErrors({
+      name: "",
+      description: "",
+      pricePerDay: "",
+      quantity: "",
+      category: "",
+      brand: "",
+      file: "",
+    });
+    setPreview(null);
   };
 
   const validateForm = () => {
@@ -92,6 +118,9 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
       description: "",
       pricePerDay: "",
       quantity: "",
+      category: "",
+      brand: "",
+      file: "",
     };
 
     if (!formData.name) {
@@ -105,6 +134,15 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
     }
     if (formData.quantity <= 0) {
       newErrors.quantity = "Количество должно быть больше нуля.";
+    }
+    if (!formData.category) {
+      newErrors.category = "Пожалуйста, выберите категорию.";
+    }
+    if (!formData.brand) {
+      newErrors.brand = "Пожалуйста, выберите бренд.";
+    }
+    if (!formData.file) {
+      newErrors.file = "Пожалуйста, загрузите изображение.";
     }
 
     setErrors(newErrors);
@@ -132,6 +170,7 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
       session?.accessToken!
     );
     onEquipmentAdded(addedEquipment);
+    resetForm();
     handleClose();
   };
 
@@ -201,7 +240,9 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
             value={formData.category}
             onChange={handleInputChange}
             select
-            fullWidth>
+            fullWidth
+            error={!!errors.category}
+            helperText={errors.category}>
             {categories.map((category) => (
               <MenuItem key={category.id} value={category.id}>
                 {category.name}
@@ -214,7 +255,9 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
             value={formData.brand}
             onChange={handleInputChange}
             select
-            fullWidth>
+            fullWidth
+            error={!!errors.brand}
+            helperText={errors.brand}>
             {brands.map((brand) => (
               <MenuItem key={brand.id} value={brand.id}>
                 {brand.name}
@@ -248,6 +291,11 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
               onChange={handleFileChange}
             />
           </Button>
+          {errors.file && (
+            <Typography color="error" variant="body2">
+              {errors.file}
+            </Typography>
+          )}
           <Button
             sx={{ backgroundColor: "#000", color: "#fff" }}
             color="primary"

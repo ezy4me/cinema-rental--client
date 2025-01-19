@@ -5,7 +5,9 @@ import styles from "./RentalItem.module.scss";
 import { fetchImageUrl } from "@/utils/fetchImageUrl";
 
 const RentalItem: React.FC<{ rental: any }> = ({ rental }) => {
-  const [equipmentImages, setEquipmentImages] = useState<{ [key: number]: string | null }>({});
+  const [equipmentImages, setEquipmentImages] = useState<{
+    [key: number]: string | null;
+  }>({});
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -15,7 +17,10 @@ const RentalItem: React.FC<{ rental: any }> = ({ rental }) => {
           const imageUrl = await fetchImageUrl(item.equipment.fileId);
           images[item.equipment.id] = imageUrl;
         } catch (error) {
-          console.error(`Error fetching image for equipment ${item.equipment.id}:`, error);
+          console.error(
+            `Error fetching image for equipment ${item.equipment.id}:`,
+            error
+          );
           images[item.equipment.id] = null;
         }
       }
@@ -29,7 +34,6 @@ const RentalItem: React.FC<{ rental: any }> = ({ rental }) => {
     <li className={styles.rentalItem}>
       <div className={styles.rentalSection}>
         <h4>Заказ #{rental.id}</h4>
-
         <div className={styles.rentalDate}>
           <p>
             <span>Дата начала:</span>{" "}
@@ -54,7 +58,9 @@ const RentalItem: React.FC<{ rental: any }> = ({ rental }) => {
                     className={styles.image}
                   />
                 ) : (
-                  <div className={styles.imagePlaceholder}>Image not available</div>
+                  <div className={styles.imagePlaceholder}>
+                    Image not available
+                  </div>
                 )}
               </div>
               <div className={styles.equipmentDetails}>
@@ -65,8 +71,11 @@ const RentalItem: React.FC<{ rental: any }> = ({ rental }) => {
           ))}
         </ul>
 
-        <p>
-          Итоговая сумма: <span>{rental.totalAmount} руб.</span>
+        <p className={styles.rentalStatus}>
+          <span>{rental.status.name}</span>
+          <p>
+            Итоговая сумма: <span>{rental.totalAmount} руб.</span>
+          </p>
         </p>
       </div>
     </li>

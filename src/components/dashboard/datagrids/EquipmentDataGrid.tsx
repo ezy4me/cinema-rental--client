@@ -168,12 +168,14 @@ const EquipmentDataGrid: React.FC = () => {
         <GridActionsCellItem
           icon={<DeleteIcon />}
           label="Delete"
+          key={id}
           onClick={handleDeleteClick(id)}
           color="inherit"
         />,
         <GridActionsCellItem
           icon={<EditIcon />}
           label="Edit"
+          key={id}
           onClick={handleEditClick(row)}
           color="inherit"
         />,

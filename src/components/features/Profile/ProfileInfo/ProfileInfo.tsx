@@ -34,7 +34,7 @@ const ProfileInfo: React.FC = () => {
   }, [session]);
 
   if (loading) {
-    return <div>Загрузка...</div>;
+    return <div></div>;
   }
 
   return (

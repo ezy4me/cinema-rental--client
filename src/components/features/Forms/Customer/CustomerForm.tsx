@@ -62,7 +62,11 @@ const CustomerForm: React.FC<CustomerInfoFormProps> = ({ customer }) => {
           label="Имя"
           id="firstName"
           type="text"
-          {...register("firstName", { required: "Имя обязательно" })}
+          {...register("firstName", {
+            required: "Имя обязательно",
+            validate: (value) =>
+              value.trim() !== "" || "Имя не может состоять только из пробелов",
+          })}
           error={errors.firstName?.message}
         />
       </div>
@@ -72,7 +76,12 @@ const CustomerForm: React.FC<CustomerInfoFormProps> = ({ customer }) => {
           label="Фамилия"
           id="secondName"
           type="text"
-          {...register("secondName", { required: "Фамилия обязательна" })}
+          {...register("secondName", {
+            required: "Фамилия обязательна",
+            validate: (value) =>
+              value.trim() !== "" ||
+              "Фамилия не может состоять только из пробелов",
+          })}
           error={errors.secondName?.message}
         />
       </div>
@@ -82,7 +91,12 @@ const CustomerForm: React.FC<CustomerInfoFormProps> = ({ customer }) => {
           label="Отчество"
           id="lastName"
           type="text"
-          {...register("lastName", { required: "Отчество обязательно" })}
+          {...register("lastName", {
+            required: "Отчество обязательно",
+            validate: (value) =>
+              value.trim() !== "" ||
+              "Отчество не может состоять только из пробелов",
+          })}
           error={errors.lastName?.message}
         />
       </div>
@@ -98,6 +112,9 @@ const CustomerForm: React.FC<CustomerInfoFormProps> = ({ customer }) => {
               value: /^\+?[0-9]{10,12}$/,
               message: "Введите корректный номер телефона",
             },
+            validate: (value) =>
+              value.trim() !== "" ||
+              "Номер телефона не может состоять только из пробелов",
           })}
           error={errors.phone?.message}
         />
