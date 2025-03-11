@@ -1,14 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import styles from "./AuthForm.module.scss";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import Input from "@/components/ui/Input/Input";
 import Button from "@/components/ui/Button/Button";
-import { register } from "@/services/auth.api";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { register, forgotPassword } from "@/services/auth.api";
+import { signIn } from "next-auth/react";
 
 interface AuthFormProps {
   onClose: () => void;
@@ -22,8 +21,8 @@ interface FormData {
 const AuthForm: React.FC<AuthFormProps> = ({ onClose }) => {
   const [isRegister, setIsRegister] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
-  const { data: session } = useSession();
-  const router = useRouter();
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   const {
     register: registerInput,
@@ -33,45 +32,59 @@ const AuthForm: React.FC<AuthFormProps> = ({ onClose }) => {
     mode: "onTouched",
   });
 
-  const toggleAuthMode = () => setIsRegister(!isRegister);
+  const toggleAuthMode = () => {
+    setIsRegister(!isRegister);
+    setServerError(null);
+    setSuccessMessage(null);
+    setIsForgotPassword(false);
+  };
 
   const onSubmit = async (data: FormData) => {
     setServerError(null);
+    setSuccessMessage(null);
 
     try {
+      if (isForgotPassword) {
+        await forgotPassword(data.email);
+        setSuccessMessage("Новый пароль отправлен на вашу почту.");
+        return;
+      }
+
       if (isRegister) {
-        const response = await register({
+        await register({
           email: data.email,
           password: data.password,
         });
-        console.log("Регистрация успешна", response);
-        onClose();
+        setSuccessMessage("Регистрация успешна! Войдите в аккаунт.");
       } else {
-        const response = await signIn("credentials", {
+        const result = await signIn("credentials", {
           email: data.email,
           password: data.password,
-          redirect: true,
+          redirect: false, // Отключаем редирект
         });
 
-        console.log("Вход успешен", response);
+        if (result?.error) {
+          setServerError("Неверный email или пароль.");
+          return;
+        }
 
         onClose();
       }
     } catch (error) {
-      setServerError("Произошла ошибка при выполнении запроса");
+      setServerError("Произошла ошибка, попробуйте позже.");
       console.error(error);
     }
   };
 
-  useEffect(() => {
-    if (session?.user.role === "ADMIN") {
-      router.push("/dashboard");
-    }
-  }, [session, router]);
-
   return (
     <div className={styles.authForm}>
-      <h3>{isRegister ? "Регистрация" : "Вход"}</h3>
+      <h3>
+        {isForgotPassword
+          ? "Восстановление пароля"
+          : isRegister
+          ? "Регистрация"
+          : "Вход"}
+      </h3>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Input
           icon={<FaEnvelope />}
@@ -87,38 +100,65 @@ const AuthForm: React.FC<AuthFormProps> = ({ onClose }) => {
           })}
           error={errors.email?.message}
         />
-        <Input
-          icon={<FaLock />}
-          label="Пароль"
-          type="password"
-          placeholder="Введите пароль"
-          {...registerInput("password", {
-            required: "Пароль обязателен",
-            minLength: {
-              value: 6,
-              message: "Пароль должен содержать минимум 6 символов",
-            },
-          })}
-          error={errors.password?.message}
-        />
+
+        {!isForgotPassword && (
+          <Input
+            icon={<FaLock />}
+            label="Пароль"
+            type="password"
+            placeholder="Введите пароль"
+            {...registerInput("password", {
+              required: isRegister ? "Пароль обязателен" : false,
+              minLength: {
+                value: 6,
+                message: "Пароль должен содержать минимум 6 символов",
+              },
+            })}
+            error={errors.password?.message}
+          />
+        )}
         {serverError && <p className={styles.serverError}>{serverError}</p>}
+        {successMessage && (
+          <p className={styles.successMessage}>{successMessage}</p>
+        )}
+
         <Button type="submit">
-          {isRegister ? "Зарегистрироваться" : "Войти"}
+          {isForgotPassword
+            ? "Восстановить пароль"
+            : isRegister
+            ? "Зарегистрироваться"
+            : "Войти"}
         </Button>
       </form>
 
-      <p className={styles.action}>
-        {isRegister ? (
-          <>
-            Уже есть аккаунт? <span onClick={toggleAuthMode}>Войти</span>
-          </>
-        ) : (
-          <>
-            Нет аккаунта?{" "}
-            <span onClick={toggleAuthMode}>Зарегистрироваться</span>
-          </>
-        )}
-      </p>
+      {isForgotPassword ? (
+        <p className={styles.action}>
+          <span onClick={() => setIsForgotPassword(false)}>
+            Вернуться к входу
+          </span>
+        </p>
+      ) : (
+        <>
+          <p
+            className={styles.forgotPassword}
+            onClick={() => setIsForgotPassword(true)}>
+            Забыли пароль?
+          </p>
+
+          <p className={styles.action}>
+            {isRegister ? (
+              <>
+                Уже есть аккаунт? <span onClick={toggleAuthMode}>Войти</span>
+              </>
+            ) : (
+              <>
+                Нет аккаунта?{" "}
+                <span onClick={toggleAuthMode}>Зарегистрироваться</span>
+              </>
+            )}
+          </p>
+        </>
+      )}
     </div>
   );
 };

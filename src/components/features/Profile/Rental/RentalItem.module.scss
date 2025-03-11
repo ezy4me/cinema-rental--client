@@ -104,5 +104,21 @@
     text-transform: uppercase;
     display: flex;
     flex-direction: column;
+    gap: 4px;
     gap: 16px;
+
+    span {
+        background: #f7c30f;
+        padding: 4px 8px;
+        color: #000000 !important;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+
+    p {
+        text-transform: uppercase;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
 }

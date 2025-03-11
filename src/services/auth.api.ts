@@ -21,3 +21,8 @@ export const register = async (data: RegisterData) => {
   const response = await apiInstance.post("/auth/register", data);
   return response.data;
 };
+
+export const forgotPassword = async (email: string) => {
+  const response = await apiInstance.post("/auth/forgot-password", { email });
+  return response.data;
+};
