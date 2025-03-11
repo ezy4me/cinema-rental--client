@@ -1,12 +1,12 @@
 import { apiInstance } from ".";
 
-export const getCategories = async (): Promise<any[]> => {
-  const response = await apiInstance.get("/user");
-  return response.data;
+export const deleteUserById = async (
+  id: number,
+  accessToken: string
+): Promise<any> => {
+  await apiInstance.delete(`/user/${id}`, {
+    headers: {
+      Authorization: `${accessToken}`,
+    },
+  });
 };
-
-export const getCategoryById = async (id: number): Promise<any> => {
-    const response = await apiInstance.get(`/user/${id}`);
-    return response.data;
-  };
-  

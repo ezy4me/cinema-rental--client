@@ -1,45 +1,66 @@
 "use client";
 
-import React, { useState } from "react";
-import { Typography, Button, Modal, Box, Grid, colors } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Typography, Modal, Box } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
-import { Inventory } from "@mui/icons-material";
-import { getUserRentals } from "@/services/rental.api";
+import { Inventory, Delete } from "@mui/icons-material";
+import { getCustomers } from "@/services/customer.api"; 
+import { deleteUserById } from "@/services/user.api"; 
+import { useSession } from "next-auth/react";
 import UserRentals from "../Rentals/UserRentals";
-
-interface UsersDataGridProps {
-  users: any[];
-}
+import { getUserRentals } from "@/services/rental.api";
 
 const style = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 400,
   height: 600,
-  overflow: 'auto',
+  overflow: "auto",
   bgcolor: "background.paper",
   boxShadow: 24,
   color: "#000",
   p: 4,
 };
 
-const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users }) => {
+const UsersDataGrid: React.FC = () => {
+  const { data: session } = useSession();
   const [open, setOpen] = useState(false);
+  const [users, setUsers] = useState<any[]>([]); 
   const [userRentals, setUserRentals] = useState<any[]>([]);
   const [selectedUser, setSelectedUser] = useState<string>("");
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      if (session?.accessToken) {
+        const customers = await getCustomers(session?.accessToken);
+        setUsers(customers);
+      }
+    };
+
+    fetchCustomers();
+  }, [session?.accessToken]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleUserRentals = async (id: any, firstName: string) => {
     const rentals = await getUserRentals(parseInt(id));
-    console.log(rentals);
-
     setUserRentals(rentals);
     setSelectedUser(firstName);
     handleOpen();
+  };
+
+  const handleDeleteUser = async (id: number) => {
+    try {
+      await deleteUserById(id, session?.accessToken!);
+      setUsers((prevRows) =>
+        prevRows.filter((row) => row.user.id !== id)
+      );
+    } catch (error) {
+      console.error("Ошибка при удалении пользователя:", error);
+    }
   };
 
   const columns: GridColDef[] = [
@@ -89,9 +110,17 @@ const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users }) => {
       getActions: ({ id, row }) => {
         return [
           <GridActionsCellItem
+            key={id}
             icon={<Inventory />}
             label="Просмотр аренды"
             onClick={() => handleUserRentals(row.user.id, row.firstName)}
+            color="inherit"
+          />,
+          <GridActionsCellItem
+            key={`delete-${id}`}
+            icon={<Delete />}
+            label="Удалить"
+            onClick={() => handleDeleteUser(row.user.id)} // Обработчик удаления
             color="inherit"
           />,
         ];
